@@ -1,0 +1,131 @@
+<%- include('layouts/admin/header.ejs') %>
+      <div class="mx-5 users-table">
+        <div class="p-3 d-flex justify-content-between">
+            <div class="d-flex gap-3 align-items-center">
+                <h4 class="txt-dark">Employee List</h4>
+                <input type="number" id="limit-of-employee" class="number-of-employee px-1" value="<%= value %>" onchange="limitOfEmployee()">
+                <span id="total">of <%= total %></span>
+            </div>
+            <button class="btn btn-clr clr-white text-small fw-7 p-3 btn-round" onclick="addEmployeePopup()">Add Employee</button>
+          </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">SL:No</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Gender</th>
+            <th scope="col">DOB</th>
+            <th scope="col">Country</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="employee-table">
+            <% if(employee.length){%>
+                <% employee.forEach((element,index) => { %>
+                  <tr class='tableitems'>
+                    <th><%= value*(ind-1)+index+1 %></th>
+                    <td class='img-nd-name'><img class="employee-img" id="picture" <% if (element.avatar) { %>
+                      src="/images/avatar/<%= element.avatar %>"
+                    <% }else{ %>
+                      src="/images/dummy-profile-pic.jpg"
+                      <% } %> alt=""><p style="color: #2B3674;"><%= element.salutation %> <%= element.firstname %> <%= element.lastname %> <% if(element.admin){ %> (Admin) <% } %></p></td>
+                    <td><%= element.email %></td>
+                    <td><%= element.mobile %></td>
+                    <td><%= element.gender %></td>
+                    <td><%= element.dob %></td>
+                    <td><%= element.country %></td>
+                    <td>
+                    <div class="dropdown">
+                    <button class="actions-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined">
+                    more_horiz
+                    </span>
+                    </button>
+                    <ul class="dropdown-menu p-2">
+                      <li>
+                      <a class="detail-items" href="/admin/viewEmployee/<%= element._id %>">
+                      <span class="material-symbols-outlined">
+                      visibility
+                      </span>
+                      <p>View Details</p>
+                      </a>
+                      </li>
+                      <li>
+                      <a class="detail-items" onclick="editEmployeePopup(`<%= element._id %>`)" href="#">
+                      <span class="material-symbols-outlined">
+                         edit
+                     </span>
+                     <p>
+                      Edit
+                      </p>
+                      </a>
+                      </li>
+                      <% if(loginUser.super_admin){ %>
+                      <li>
+                      <a class="detail-items" href="#" onclick="deleteEmployeePopup(`<%= element._id %>`)">
+                      <span class="material-symbols-outlined">
+                        delete
+                        </span>
+                        <p>
+                      Delete
+                      </p>
+                      </a>
+                      </li>
+                      <% if(!element.admin) {%> 
+                      <li>
+                        <a class="detail-items" href="/admin/makeAdmin/<%= element._id %>">
+                          <span class="material-symbols-outlined">
+                            shield_person
+                            </span>
+                            <p>
+                          Make Admin
+                          </p>
+                          </a>
+                      </li>
+                      
+                
+                      <% }else {%>
+                        <li>
+                          <a class="detail-items" href="/admin/makeAdmin/<%= element._id %>">
+                            <span class="material-symbols-outlined">
+                              shield_person
+                              </span>
+                              <p>
+                            Remove Admin
+                            </p>
+                            </a>
+                        </li>
+                        <% } %>
+                      <% } %>
+                     
+                    </ul>
+                  </div>
+                  <tr>
+                <% }) %>
+                <% }else{ %>
+                  <h3>No employees found</h3>
+                  <% } %>
+        </tbody>
+      </table>
+      </div>
+      <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+        <ul class="pagination">
+          <li class="page-item">
+            <a class="page-link" style="cursor: pointer;" aria-label="Previous" onclick="pagination(1)">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        <% for(let i=1;i<=limit;i++){ %>
+          <li class="page-item"><button class="page-link" id="pagination-admin" onclick="pagination(`<%= i %>`)" style="cursor: pointer;"><%= i %></button></li>
+          <% } %>
+          <li class="page-item">
+            <a class="page-link" style="cursor: pointer;" aria-label="Next" onclick="pagination(`<%= limit %>`)">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      </div>
+      <%- include('layouts/admin/footer.ejs') %>
