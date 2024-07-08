@@ -1,7 +1,8 @@
 const employees = require('../models/employees');
 const bcrypt = require('bcrypt');
-const otpSend = require('../services/otp');
-let employee,otp;
+const otpSend = require('../helpers/otp');
+const empServices = require('../services/employees.service');
+let employee;
 
 const registerPage = (req,res) => {
     res.render("register",{msg:null,firstname:null,lastname:null,email:null,mobile:null,dob:null,gender:null,address:null,qualifications:null,city:null,username:null,password:null,salutation:"Select",country:"Select",state:"Select"});
@@ -20,7 +21,7 @@ const register = async (req,res) => {
             }else if(!emailRegex.test(email)){
                 res.render("register",{msg:"Invalid email format..",firstname:firstname,lastname:lastname,email:email,mobile:mobile,dob:dob,gender:gender,address:address,qualifications:qualifications,city:city,username:username,salutation:salutation,country:country,state:state,password:password});
             }else{
-                otp = Math.floor(1000 + Math.random() * 9000);
+                req.session.otp = Math.floor(1000 + Math.random() * 9000);
                 employee = new employees({
                     salutation : salutation,
                     firstname : firstname,
@@ -36,9 +37,10 @@ const register = async (req,res) => {
                     city : city,
                     username : username,
                     password : bcrypt.hashSync(password,10),
-                    admin : false
+                    admin : false,
+                    deleted : false
                 });
-                otpSend(email,otp);
+                otpSend(email,req.session.otp);
                 res.render('otp',{msg:null});
             }
         }else{
@@ -48,8 +50,9 @@ const register = async (req,res) => {
 }
 const otpVerification = async (req,res) => {
     const {currentOtp} = req.body;
+    const {otp} = req.session;
     if(currentOtp == otp){
-        await employee.save();
+        await empServices.add(employee);
         res.redirect('/');
     }else{
         res.render("otp",{msg:"Invalid OTP.."});
@@ -57,7 +60,7 @@ const otpVerification = async (req,res) => {
 }
 const editProfileForm = async (req,res) => {
     const {id} = req.params;
-    const employee = await employees.findOne({_id:id});
+    const employee = await empServices.findOne(id);
     res.render("editProfile",{employee:employee,msg:null,firstname:employee.firstname,lastname:employee.lastname,email:employee.email,mobile:employee.mobile,dob:employee.dob,gender:employee.gender,address:employee.address,qualifications:employee.qualifications,city:employee.city,username:employee.username,salutation:employee.salutation,country:employee.country,state:employee.state});
 }
 const editProfile = async (req,res) => {
@@ -77,7 +80,7 @@ const editProfile = async (req,res) => {
             }else if(!emailRegex.test(email)){
                 res.render("editProfile",{msg:"Invalid email format..",firstname:firstname,lastname:lastname,email:email,mobile:mobile,dob:dob,gender:gender,address:address,qualifications:qualifications,city:city,username:username,salutation:salutation,country:country,state:state});
             }else{
-                await employees.findByIdAndUpdate(id,{salutation:salutation,firstname:firstname,lastname:lastname,email:email,mobile:mobile,dob:dob,gender:gender,address:address,qualifications:qualifications,country:country,state:state,city:city,username:username});
+                await empServices.updateOne(id,req.body);
                 res.redirect(`/employee/${id}`);
             }
         }

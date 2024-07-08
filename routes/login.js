@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../services/authenticate');
+const auth = require('../middleware/authenticate');
 const {homepage,login} = require('../controllers/loginController');
 
 router.get('/',auth,homepage);

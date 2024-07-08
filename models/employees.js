@@ -49,6 +49,9 @@ const employeeSchema = new Schema({
         },
         admin : {
             type : Boolean
+        },
+        deleted : {
+            type : Boolean
         }
 });
 

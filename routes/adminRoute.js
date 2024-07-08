@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../services/multer');
-const auth = require('../services/authenticate');
+const upload = require('../helpers/multer');
+const auth = require('../middleware/authenticate');
 const {addEmployee,dashboard,addEmployeeForm,viewEmployee,editEmployeeForm,editEmployee,employeeProfilePic,employeeList,pagination, searchEmployee, deleteEmployee, makeAdmin, adminProfile, allEmployeeList} = require('../controllers/adminController');
 
 router.get('/dashboard',auth,dashboard);

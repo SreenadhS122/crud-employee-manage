@@ -5,7 +5,7 @@ const cache = require('nocache');
 const logger = require('morgan');
 const cookieParser =  require('cookie-parser');
 const cors = require('cors');
-const {mongo} = require('./dbConnect/dbConnect');
+const {mongoConnect} = require('./dbConnect/dbConnect');
 const loginRoute = require('./routes/login');
 const employeeRoute = require('./routes/employeeRoute');
 const adminRoute = require('./routes/adminRoute');
@@ -34,5 +34,5 @@ app.use('/employee',employeeRoute);
 app.use('/admin',adminRoute);
 app.use('/',logoutRoute);
 
-mongo();
+mongoConnect();
 app.listen(process.env.PORT || 8080);

@@ -518,7 +518,6 @@ async function deleteEmployee(id){
     await fetch(`http://localhost:8080/admin/deleteEmployee/${id}`,{
         method:"delete"
     });
-    
 }
 function pagination(page){
     const limit = document.getElementById("limit-of-employee").value;

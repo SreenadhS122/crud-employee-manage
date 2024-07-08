@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../services/authenticate');
-const upload = require('../services/multer');
+const auth = require('../middleware/authenticate');
+const upload = require('../helpers/multer');
 const {registerPage,register,otpVerification,editProfileForm,editProfile,profile,profilePic} = require('../controllers/employeeController');
 
 router.get('/register',registerPage);
